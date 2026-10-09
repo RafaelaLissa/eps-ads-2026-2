@@ -11,7 +11,7 @@ public class HelloController {
        return "API em funcionamento!";
    }
 
-   @GetMapping("/users")
+   @GetMapping("/teste-users")
    public String listUsers(){
     return "Listando todos os usuários";
    }
