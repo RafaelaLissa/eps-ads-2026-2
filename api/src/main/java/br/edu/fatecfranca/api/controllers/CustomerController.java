@@ -21,6 +21,8 @@ import br.edu.fatecfranca.api.dtos.CustomerRequest;
 //import br.edu.fatecfranca.api.repositories.CustomerRepository;
 import br.edu.fatecfranca.api.services.CustomerService;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/customers")
@@ -48,7 +50,7 @@ private final CustomerService service;
     //       .body(savedCustomer);
 // }
 @PostMapping
-   public ResponseEntity<Customer> create(@RequestBody CustomerRequest request) {
+   public ResponseEntity<Customer> create(@Valid @RequestBody CustomerRequest request) {
 
        Customer savedCustomer = service.create(request);
 
@@ -97,7 +99,7 @@ private final CustomerService service;
 @PutMapping("/{id}")
    public ResponseEntity<Customer> update(
            @PathVariable Long id,
-           @RequestBody CustomerRequest request) {
+           @Valid @RequestBody CustomerRequest request) {
 
        if (!service.existsById(id)) {
            return ResponseEntity.notFound().build();
