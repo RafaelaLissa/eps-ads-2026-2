@@ -9,10 +9,17 @@ import br.edu.fatecfranca.api.dtos.CustomerRequest;
 import br.edu.fatecfranca.api.entities.Customer;
 import br.edu.fatecfranca.api.repositories.CustomerRepository;
 
+import br.edu.fatecfranca.api.validators.RequestValidator;
+import br.edu.fatecfranca.api.validators.StateValidator;
+import br.edu.fatecfranca.api.validators.UniqueDocumentValidator;
+import br.edu.fatecfranca.api.validators.UniqueEmailValidator;
+
 @Service
 public class CustomerService {
 
    private final CustomerRepository repository;
+   // 1. Parametrizado com <CustomerRequest>
+   private final RequestValidator<CustomerRequest> validator;
 
    private void copyToEntity(
        CustomerRequest request,
@@ -31,12 +38,22 @@ public class CustomerService {
        customer.setEmail(request.email());
    } 
 
-
    public CustomerService(CustomerRepository repository) {
        this.repository = repository;
+
+       // 2. Parametrizados com <CustomerRequest>
+       RequestValidator<CustomerRequest> emailValidator =
+           new UniqueEmailValidator(repository, null);
+
+       RequestValidator<CustomerRequest> documentValidator =
+           new UniqueDocumentValidator(repository, emailValidator);
+
+       this.validator = new StateValidator(documentValidator);
    }
 
    public Customer create(CustomerRequest request) {
+       // 3. Agora totalmente seguro em termos de tipos (Type safety)
+       validator.validate(request, null);
        Customer customer = new Customer();
 
        copyToEntity(request, customer);
@@ -53,6 +70,8 @@ public class CustomerService {
    }
 
    public Customer update(Long id, CustomerRequest request) {
+       // 4. Também seguro em termos de tipos
+       validator.validate(request, id);
        Customer customer = new Customer();
 
        copyToEntity(request, customer);
@@ -70,4 +89,3 @@ public class CustomerService {
        repository.deleteById(id);
    }
 }
-
