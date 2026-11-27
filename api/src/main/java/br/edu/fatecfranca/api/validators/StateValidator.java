@@ -23,7 +23,7 @@ public class StateValidator extends RequestValidator<CustomerRequest> {
    protected void check(CustomerRequest request, Long customerId) {
        if (!VALID_STATES.contains(request.state())) {
            throw new ResponseStatusException(
-               HttpStatus.BAD_REQUEST,
+               HttpStatus.CONFLICT,
                "A UF informada não existe."
            );
        }
